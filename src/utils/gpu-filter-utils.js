@@ -1,3 +1,23 @@
+// Copyright (c) 2019 Uber Technologies, Inc.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 import {set} from './utils';
 import {MAX_GPU_FILTERS} from 'constants/default-settings';
 /**
@@ -71,12 +91,12 @@ export function resetFilterGpuMode(filters) {
 
 /**
  * Initial filter uniform
- * @returns {{filter_min: Array<Number>,filter_max: Array<Number>}}
+ * @returns {{filterMin: Array<Number>,filterMax: Array<Number>}}
  */
-function getEmptyFilterUniform() {
+function getEmptyFilterRange() {
   return {
-    filter_min: new Array(MAX_GPU_FILTERS).fill(0),
-    filter_max: new Array(MAX_GPU_FILTERS).fill(0)
+    filterMin: new Array(MAX_GPU_FILTERS).fill(0),
+    filterMax: new Array(MAX_GPU_FILTERS).fill(0)
   };
 }
 
@@ -101,10 +121,10 @@ function getFilterValueAccessor(channels) {
  * Get filter properties for gpu filtering
  * @param {Array<Object>} filters
  * @param {string} dataId
- * @returns {{filterUniform: {Object}, filterValueUpdateTriggers: Object, getFilterValue: Function}}
+ * @returns {{filterRange: {Object}, filterValueUpdateTriggers: Object, getFilterValue: Function}}
  */
 export function getGpuFilterProps(filters, dataId) {
-  const filterUniform = getEmptyFilterUniform();
+  const filterRange = getEmptyFilterRange();
   const triggers = {};
 
   // array of filter for each channel, undefined, if no filter is assigned to that channel
@@ -114,8 +134,8 @@ export function getGpuFilterProps(filters, dataId) {
     const filter = filters.find(
       f => f.dataId === dataId && f.gpu && f.gpuChannel === i
     );
-    filterUniform.filter_min[i] = filter ? filter.value[0] : 0;
-    filterUniform.filter_max[i] = filter ? filter.value[1] : 0;
+    filterRange.filterMin[i] = filter ? filter.value[0] : 0;
+    filterRange.filterMax[i] = filter ? filter.value[1] : 0;
 
     triggers[i] = filter ? filter.name : null;
     channels.push(filter);
@@ -123,5 +143,5 @@ export function getGpuFilterProps(filters, dataId) {
 
   const getFilterValue = getFilterValueAccessor(channels);
 
-  return {filterUniform, filterValueUpdateTriggers: triggers, getFilterValue};
+  return {filterRange, filterValueUpdateTriggers: triggers, getFilterValue};
 }
