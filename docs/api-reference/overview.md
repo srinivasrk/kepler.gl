@@ -2,7 +2,7 @@
 
 ## Table of Content
 
--  [Overview][overview]
+-  [Overview][.]
 -  [Ecosystem][ecosystem]
     - [Component][component]
     - [Reducer and Forward Dispatcher][reducer-and-forward-dispatcher]
